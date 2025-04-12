@@ -1,0 +1,21 @@
+name: CristianoMinenaldoKillstreak
+version: 1.0
+main: me.scott.cristianominenaldokillstreak.CristianoMinenaldoKillstreak
+api-version: 1.20
+
+author: NotTooShabby
+description: A minecraft plugin where players can activate a powerful lighting strike killstreak when completing
+              a challenge and then performing the iconic celebration from a very famous football or soccer player
+
+commands:
+  siuu:
+    description: Begin the Minenaldo challenge, by typing /siuuu in the chat
+                  this will spawn a custom golden slime ball in hotbar or inventory
+                  right click it to begin the challenge and earn this epic killstreak!
+    usage: /siuuu
+    aliases: [siu, siuu, siuuu]
+
+permissions:
+  minenaldo.challenge:
+    description: Allows a player to use the SIUUU command
+    default: true

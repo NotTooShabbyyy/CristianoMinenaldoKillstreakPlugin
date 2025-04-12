@@ -1,0 +1,8 @@
+siuuu_activator:
+  name: "SIUUU Challenge Activator"
+  lore:
+    - "&7Right-click to start the challenge"
+    - "&eKill 3 mobs ih 4 minutes"
+challenge:
+  required-kills: 3
+  timer-minutes: 4

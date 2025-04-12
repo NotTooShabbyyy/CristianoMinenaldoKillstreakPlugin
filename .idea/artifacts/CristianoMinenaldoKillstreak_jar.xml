@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CristianoMinenaldoKillstreak:jar">
+    <output-path>$USER_HOME$/Desktop/MyTestServer/plugins</output-path>
+    <root id="archive" name="CristianoMinenaldoKillstreak.jar">
+      <element id="module-output" name="CristianoMinenaldoKillstreak" />
+    </root>
+  </artifact>
+</component>
