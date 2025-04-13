@@ -6,3 +6,5 @@ siuuu_activator:
 challenge:
   required-kills: 3
   timer-minutes: 4
+celebration_challenge:
+  timer-minutes: 2

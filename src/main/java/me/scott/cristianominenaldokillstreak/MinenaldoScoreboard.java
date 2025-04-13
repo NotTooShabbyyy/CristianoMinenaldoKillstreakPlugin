@@ -17,7 +17,7 @@ public class MinenaldoScoreboard {
     private static final Map<Player, Objective> playerObjectives = new HashMap<>();
 
 
-    private static String formatTime(int totalSeconds) {
+    public static String formatTime(int totalSeconds) {
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
         return String.format("%d:%02d", minutes, seconds);
@@ -47,10 +47,43 @@ public class MinenaldoScoreboard {
 
     }
 
+    public static void showCelebrationScoreboard(Player player, int startingTimeSeconds) {
+        // remove  the  challenge board from list
+        clear(player);
+
+        ScoreboardManager manager = Bukkit.getScoreboardManager();
+        Scoreboard board = manager.getNewScoreboard();
+
+        Objective objective = board.registerNewObjective("Celebration-Challenge", "dummy", ChatColor.GOLD + "Celebration Challenge");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+
+        // clear row for space at top
+        objective.getScore(" ").setScore(2);
+        objective.getScore(ChatColor.AQUA + "Time Left: " + formatTime(startingTimeSeconds)).setScore(1);
+
+
+        // add new board to playerBoards list
+
+        player.setScoreboard(board);
+        playerBoards.put(player, board);
+        playerObjectives.put(player, objective);
+    }
+
     public static void clear(Player player) {
         player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         playerBoards.remove(player);
         playerObjectives.remove(player);
+    }
+
+    public static void wipePlayerBoardValues(Player player) {
+        Scoreboard board = getPlayerBoard(player);
+
+
+        for (String entry : board.getEntries()) {
+            board.resetScores(entry);
+        }
+
     }
 
     public static Scoreboard getPlayerBoard(Player player) {

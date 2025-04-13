@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
@@ -24,6 +25,8 @@ public class MinenaldoChallengeManager {
     private static MinenaldoChallengeManager instance;
     private CristianoMinenaldoKillstreak mainPlugin;
     private final Map<UUID, Integer> playerKills = new HashMap<>();
+    private final Map<UUID, BukkitTask> activeTimers = new HashMap<>();
+
     private int requiredKills;
 
 
@@ -49,6 +52,9 @@ public class MinenaldoChallengeManager {
     }
 
 
+
+
+
     public ChallengeState getPlayerState(Player player) {
 
         return playerStates.get(player.getUniqueId());
@@ -58,6 +64,21 @@ public class MinenaldoChallengeManager {
           playerStates.put(player.getUniqueId(), newState);
     }
 
+    public boolean playerHasTimers(UUID playerUUID) {
+        return activeTimers.containsKey(playerUUID);
+    }
+
+    public BukkitTask getPlayerTimers(UUID playerUUID) {
+        return activeTimers.get(playerUUID);
+    }
+
+    public void removePlayerTimers(UUID playerUUID) {
+        activeTimers.remove(playerUUID);
+    }
+
+    public void addPlayerTimer(UUID playerUUID, BukkitTask newTask) {
+        activeTimers.put(playerUUID, newTask);
+    }
 
     public void clearPlayerState(UUID playerUniqueID) {
         Player player = Bukkit.getPlayer(playerUniqueID);
@@ -133,7 +154,7 @@ public class MinenaldoChallengeManager {
 
         player.sendTitle(
                 ChatColor.GOLD + "CHALLENGE COMPLETE!",
-                ChatColor.GREEN + "You the kill goal!",
+                ChatColor.GREEN + "You got the required " + requiredKills + " kills!",
                 10, 40, 10
         );
 
@@ -142,17 +163,18 @@ public class MinenaldoChallengeManager {
 
 
         // Transition to the explanation of the celebration challeng
-          startCelebrationPause(player);
+          startCelebrationExplanation(player);
 
 
     }
 
-    public void startCelebrationPause(Player player) {
+    public void startCelebrationExplanation(Player player) {
+        // change stae to celebration_challange_explanation
         setPlayerState(player, ChallengeState.CELEBRATION_CHALLENGE_EXPLANATION);
 
-        player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 40, 1));
-        player.sendMessage(ChatColor.YELLOW + "Cristiano Minenaldo enters the pitch...");
-
+        player.sendMessage(ChatColor.YELLOW + " To activate your killstreak, you need to perform the iconic celebration from Cristiano Minenaldo!");
+        player.sendMessage(ChatColor.YELLOW + " Jump up into the air and then land facing the other way.");
+        player.sendMessage(ChatColor.GOLD + "Right-clikk SIUUU-Activator to start this challenge!");
 
     }
 

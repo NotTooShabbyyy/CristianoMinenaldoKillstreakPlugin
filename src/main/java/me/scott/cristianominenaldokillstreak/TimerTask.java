@@ -1,5 +1,6 @@
 package me.scott.cristianominenaldokillstreak;
 
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Objective;
@@ -43,23 +44,39 @@ public class TimerTask extends BukkitRunnable {
         boolean timerChanged = !lastChallengeTimer.equals(challengeTimer);
         boolean killsChanged = previousNumberOfKills != currentKills;
 
-        if (timerChanged || killsChanged) {
-            lastChallengeTimer = challengeTimer;
-            previousNumberOfKills = currentKills;
 
-            Scoreboard board = MinenaldoScoreboard.getPlayerBoard(player);
-            Objective objective = MinenaldoScoreboard.getPlayerScoreboardObjective(player);
+        if (mainPlugin.challengeManager.getPlayerState(player) == ChallengeState.CHALLENGE_STARTED) {
+            if (timerChanged || killsChanged) {
+                lastChallengeTimer = challengeTimer;
+                previousNumberOfKills = currentKills;
 
-            // Clear the text on scoreboard
+                // Clear the text on scoreboard
 
-            for (String entry : board.getEntries()) {
-                board.resetScores(entry);
+                Scoreboard board = MinenaldoScoreboard.getPlayerBoard(player);
+                Objective objective = MinenaldoScoreboard.getPlayerScoreboardObjective(player);
+
+
+                MinenaldoScoreboard.wipePlayerBoardValues(player);
+
+                objective.getScore("§7Kills: §a" + currentKills + " / " + mainPlugin.challengeManager.getRequiredKills()).setScore(2);
+                objective.getScore("§7Time Left: §e" + challengeTimer).setScore(1);
+
+
             }
 
-            objective.getScore("§7Kills: §a" + currentKills + " / " + mainPlugin.challengeManager.getRequiredKills()).setScore(2);
-            objective.getScore("§7Time Left: §e" + challengeTimer).setScore(1);
+        }
+
+        else if (mainPlugin.challengeManager.getPlayerState(player) == ChallengeState.CELEBRATION_CHALLENGE_EXPLANATION) {
+            if (timerChanged) {
+                lastChallengeTimer = challengeTimer;
 
 
+                MinenaldoScoreboard.wipePlayerBoardValues(player);
+                Objective objective = MinenaldoScoreboard.getPlayerScoreboardObjective(player);
+
+                objective.getScore(" ").setScore(2);
+                objective.getScore(ChatColor.AQUA + "Time Left: " + challengeTimer);
+            }
         }
 
 

@@ -1,5 +1,6 @@
 package me.scott.cristianominenaldokillstreak;
 
+import com.sun.java.accessibility.util.GUIInitializedListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -14,6 +15,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,7 +127,7 @@ public class MinenaldoKillstreakEventHandler implements Listener {
             );
 
 
-
+            // Starts the timer for the main kill challenge
             new TimerTask(challenge_timer * 60, player).runTaskTimer(mainPlugin, 0L, 5L);
 
 
@@ -135,7 +139,26 @@ public class MinenaldoKillstreakEventHandler implements Listener {
             return;
         }
 
-        mainPlugin.challengeManager.setPlayerState(player, ChallengeState.CELEBRATION_CHALLENGE_STARTED);
+
+        // Player is in celebration explanation state
+
+        // show new scoreboard, this method deletes previous one for main
+        MinenaldoScoreboard.showCelebrationScoreboard(player, mainPlugin.getConfig().getInt("celebration_challenge.timer-minutes") * 60);
+
+        // stop active timers on player
+        if (mainPlugin.challengeManager.playerHasTimers(uuid)) {
+            mainPlugin.challengeManager.getPlayerTimers(uuid).cancel();
+            mainPlugin.challengeManager.removePlayerTimers(uuid);
+        }
+
+
+        // create, store new task
+        BukkitTask task = new TimerTask(mainPlugin.getConfig().getInt("celebration_challenge.timer-minutes") * 60, player).runTaskTimer(mainPlugin, 1L, 5L);
+        mainPlugin.challengeManager.addPlayerTimer(uuid, task);
+
+
+        // if player is in celebration_explanation challenge state we simple clean text scoreboard data
+
 
 
     }
