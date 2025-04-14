@@ -8,3 +8,7 @@ challenge:
   timer-minutes: 4
 celebration_challenge:
   timer-minutes: 2
+challenge_failed_reasons:
+  - "Timer-expired main challenge"
+  - "Player Died"
+  - "Timer-expired celebration challenge"

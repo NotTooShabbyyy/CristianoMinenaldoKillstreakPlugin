@@ -29,7 +29,16 @@ public class TimerTask extends BukkitRunnable {
 
         if (timeLeft <= 0) {
             cancel();
-            player.sendMessage("Challenge timer is up!");
+            player.sendMessage(ChatColor.RED + "Challenge timer is up!");
+
+
+            if (mainPlugin.challengeManager.getPlayerState(player) == ChallengeState.CHALLENGE_STARTED) {
+
+                mainPlugin.challengeManager.endChallenge(player, ChallengeFailureReasons.MAIN_CHALLENGE_TIMER_EXPIRED);
+            }
+            else if (mainPlugin.challengeManager.getPlayerState(player) == ChallengeState.CELEBRATION_CHALLENGE_STARTED) {
+                mainPlugin.challengeManager.endChallenge(player, ChallengeFailureReasons.CELEBRATION_CHALLENGE_TIMER_EXPIRED);
+            }
             return;
         }
 
@@ -37,7 +46,7 @@ public class TimerTask extends BukkitRunnable {
         int minutes = msSecondsLeft / 60;
         int seconds = msSecondsLeft % 60;
 
-        String challengeTimer = String.format("Time left: %d:%02d", minutes, seconds);
+        String challengeTimer = String.format("%d:%02d", minutes, seconds);
 
         // Gui logic
 
@@ -66,16 +75,18 @@ public class TimerTask extends BukkitRunnable {
 
         }
 
-        else if (mainPlugin.challengeManager.getPlayerState(player) == ChallengeState.CELEBRATION_CHALLENGE_EXPLANATION) {
+        else if (mainPlugin.challengeManager.getPlayerState(player) == ChallengeState.CELEBRATION_CHALLENGE_STARTED) {
             if (timerChanged) {
                 lastChallengeTimer = challengeTimer;
 
-
-                MinenaldoScoreboard.wipePlayerBoardValues(player);
+                Scoreboard board = MinenaldoScoreboard.getPlayerBoard(player);
                 Objective objective = MinenaldoScoreboard.getPlayerScoreboardObjective(player);
 
+                MinenaldoScoreboard.wipePlayerBoardValues(player);
+
+
                 objective.getScore(" ").setScore(2);
-                objective.getScore(ChatColor.AQUA + "Time Left: " + challengeTimer);
+                objective.getScore(ChatColor.AQUA + "Time Left: " + challengeTimer).setScore(1);
             }
         }
 

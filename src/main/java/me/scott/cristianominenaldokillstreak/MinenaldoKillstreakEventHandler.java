@@ -12,6 +12,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -27,6 +28,7 @@ public class MinenaldoKillstreakEventHandler implements Listener {
     CristianoMinenaldoKillstreak mainPlugin;
     private int required_kills;
     private int challenge_timer;
+    private int celebration_challenge_timer;
 
 
     public MinenaldoKillstreakEventHandler(CristianoMinenaldoKillstreak mainPlugin) {
@@ -34,6 +36,7 @@ public class MinenaldoKillstreakEventHandler implements Listener {
         this.mainPlugin = mainPlugin;
         required_kills = mainPlugin.getConfig().getInt("challenge.required-kills");
         challenge_timer = mainPlugin.getConfig().getInt("challenge.timer-minutes");
+        celebration_challenge_timer = mainPlugin.getConfig().getInt("celebration_challenge.timer-minutes");
     }
 
     @EventHandler
@@ -52,7 +55,7 @@ public class MinenaldoKillstreakEventHandler implements Listener {
             return;
         }
 
-        mainPlugin.challengeManager.endChallenge(player, false);
+        mainPlugin.challengeManager.endChallenge(player, ChallengeFailureReasons.PLAYER_DIED);
     }
 
     @EventHandler
@@ -128,8 +131,8 @@ public class MinenaldoKillstreakEventHandler implements Listener {
 
 
             // Starts the timer for the main kill challenge
-            new TimerTask(challenge_timer * 60, player).runTaskTimer(mainPlugin, 0L, 5L);
-
+            BukkitTask task = new TimerTask(challenge_timer * 60, player).runTaskTimer(mainPlugin, 0L, 5L);
+            mainPlugin.challengeManager.addPlayerTimer(uuid, task);
 
             return;
         }
@@ -142,18 +145,14 @@ public class MinenaldoKillstreakEventHandler implements Listener {
 
         // Player is in celebration explanation state
 
-        // show new scoreboard, this method deletes previous one for main
-        MinenaldoScoreboard.showCelebrationScoreboard(player, mainPlugin.getConfig().getInt("celebration_challenge.timer-minutes") * 60);
 
-        // stop active timers on player
-        if (mainPlugin.challengeManager.playerHasTimers(uuid)) {
-            mainPlugin.challengeManager.getPlayerTimers(uuid).cancel();
-            mainPlugin.challengeManager.removePlayerTimers(uuid);
-        }
+        mainPlugin.challengeManager.setPlayerState(player, ChallengeState.CELEBRATION_CHALLENGE_STARTED);
+        // show new scoreboard, this method deletes previous one for main
+        MinenaldoScoreboard.showCelebrationScoreboard(player, celebration_challenge_timer * 60);
 
 
         // create, store new task
-        BukkitTask task = new TimerTask(mainPlugin.getConfig().getInt("celebration_challenge.timer-minutes") * 60, player).runTaskTimer(mainPlugin, 1L, 5L);
+        BukkitTask task = new TimerTask(celebration_challenge_timer * 60, player).runTaskTimer(mainPlugin, 0L, 5L);
         mainPlugin.challengeManager.addPlayerTimer(uuid, task);
 
 
@@ -162,6 +161,8 @@ public class MinenaldoKillstreakEventHandler implements Listener {
 
 
     }
+
+
 
     @EventHandler
     public void OnMobKill(EntityDeathEvent event) {

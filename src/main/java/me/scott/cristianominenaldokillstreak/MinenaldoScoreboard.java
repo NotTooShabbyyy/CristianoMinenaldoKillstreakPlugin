@@ -41,6 +41,7 @@ public class MinenaldoScoreboard {
         objective.getScore(ChatColor.AQUA + "Time Left: " + ChatColor.WHITE + formatTime(timeSecondsLeft)).setScore(1);
 
 
+
         player.setScoreboard(board);
         playerBoards.put(player, board);
         playerObjectives.put(player, objective);
@@ -49,7 +50,7 @@ public class MinenaldoScoreboard {
 
     public static void showCelebrationScoreboard(Player player, int startingTimeSeconds) {
         // remove  the  challenge board from list
-        clear(player);
+
 
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
@@ -79,6 +80,10 @@ public class MinenaldoScoreboard {
     public static void wipePlayerBoardValues(Player player) {
         Scoreboard board = getPlayerBoard(player);
 
+        if (board == null) {
+            CristianoMinenaldoKillstreak.getInstance().getLogger().info("Board is null in the wipe board values func");
+            return;
+        }
 
         for (String entry : board.getEntries()) {
             board.resetScores(entry);

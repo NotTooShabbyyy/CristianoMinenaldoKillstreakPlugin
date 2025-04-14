@@ -20,7 +20,8 @@ public class CristianoMinenaldoKillstreak extends JavaPlugin {
 
         getCommand("siuuu").setExecutor(new MinenaldoKillstreakCommandHandler(this));
         getServer().getPluginManager().registerEvents(new MinenaldoKillstreakEventHandler(this), this);
-
+        getServer().getPluginManager().registerEvents(new CelebrationChallengeListener(this), this);
+        getServer().getPluginManager().registerEvents(new GodModeListener(this, challengeManager), this);
     }
 
     @Override
